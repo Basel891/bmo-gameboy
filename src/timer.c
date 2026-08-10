@@ -68,7 +68,7 @@ int8_t timer_set_timeout(uint32_t delay_ms, void (*cb)(void))
         if (!timerTasks[i].active)
         {
             timerTasks[i].targetTime = millis() + delay_ms;
-            timerTasks[i].interval = 0;
+            timerTasks[i].interval = delay_ms;
             timerTasks[i].callback = cb;
             timerTasks[i].repeat = 0;
             timerTasks[i].active = 1;
@@ -87,7 +87,7 @@ int8_t timer_set_interval(uint32_t delay_ms, void (*cb)(void))
         if (!timerTasks[i].active)
         {
             timerTasks[i].targetTime = millis() + delay_ms;
-            timerTasks[i].interval = 0;
+            timerTasks[i].interval = delay_ms;
             timerTasks[i].callback = cb;
             timerTasks[i].repeat = 1;
             timerTasks[i].active = 1;
