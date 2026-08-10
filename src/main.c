@@ -4,9 +4,8 @@
 #include "timer.h"
 #include <util/delay.h>
 
-void led(void *arg)
+void led()
 {
-    (void)arg;
     TOG_BIT(PORTC, 0);
 }
 
@@ -24,12 +23,12 @@ int main()
 
     timer_init();
 
-    uint8_t timer_id = timer_set_interval(1000, led, NULL);
+    uint8_t timer_id = timer_set_interval(1000, led);
 
     while (true)
     {
         timer_update();
 
-        timer_set_timeout(5000, turnoff, (void *)timer_id);
+        timer_set_timeout_arg(5000, turnoff, (void *)timer_id);
     }
 }
