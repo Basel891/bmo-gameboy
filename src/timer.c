@@ -10,7 +10,8 @@ typedef struct
 {
     uint32_t targetTime;
     uint32_t interval;
-    void (*callback)(void);
+    void (*callback)(void *arg);
+    void *arg;
     uint8_t repeat;
     uint8_t active;
 
@@ -61,7 +62,10 @@ uint32_t millis()
 // Non-repeating timer that calls a callback function after the delay finishes
 // Returns timer slot index or -1 if all timer slots are used
 // We can use the return id to use the timer_cancel later. Ignore it if you don't want to cancel
-int8_t timer_set_timeout(uint32_t delay_ms, void (*cb)(void))
+// Requires an argument or a struct of arguments, pass NULL if there isn't any.
+// Make sure to cast the arg to (void *) and also do the casting in the callback function definition
+// Then you can cast it back inside the function itself and use it as you want.
+int8_t timer_set_timeout(uint32_t delay_ms, void (*cb)(void *arg), void *arg)
 {
     for (uint8_t i = 0; i < MAX_TIMERS; i++)
     {
@@ -70,6 +74,7 @@ int8_t timer_set_timeout(uint32_t delay_ms, void (*cb)(void))
             timerTasks[i].targetTime = millis() + delay_ms;
             timerTasks[i].interval = delay_ms;
             timerTasks[i].callback = cb;
+            timerTasks[i].arg = arg;
             timerTasks[i].repeat = 0;
             timerTasks[i].active = 1;
             return i;
@@ -79,8 +84,13 @@ int8_t timer_set_timeout(uint32_t delay_ms, void (*cb)(void))
     return -1;
 }
 
-// Repeating timer
-int8_t timer_set_interval(uint32_t delay_ms, void (*cb)(void))
+// Repeating timer that calls a callback function after the delay finishes
+// Returns timer slot index or -1 if all timer slots are used
+// We can use the return id to use the timer_cancel later. Ignore it if you don't want to cancel
+// Requires an argument or a struct of arguments, pass NULL if there isn't any.
+// Make sure to cast the arg to (void *) and also do the casting in the callback function definition
+// Then you can cast it back inside the function itself and use it as you want.
+int8_t timer_set_interval(uint32_t delay_ms, void (*cb)(void *arg), void *arg)
 {
     for (uint8_t i = 0; i < MAX_TIMERS; i++)
     {
@@ -89,6 +99,7 @@ int8_t timer_set_interval(uint32_t delay_ms, void (*cb)(void))
             timerTasks[i].targetTime = millis() + delay_ms;
             timerTasks[i].interval = delay_ms;
             timerTasks[i].callback = cb;
+            timerTasks[i].arg = arg;
             timerTasks[i].repeat = 1;
             timerTasks[i].active = 1;
             return i;
@@ -116,7 +127,7 @@ void timer_update()
         if (timerTasks[i].active && (current_ms >= timerTasks[i].targetTime))
         {
             if (timerTasks[i].callback != NULL)
-                timerTasks[i].callback();
+                timerTasks[i].callback(timerTasks[i].arg);
 
             if (timerTasks[i].repeat)
                 timerTasks[i].targetTime = current_ms + timerTasks[i].interval;
