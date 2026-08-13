@@ -2,33 +2,29 @@
 #include <avr/io.h>
 #include "BIT_MATH.h"
 #include "timer.h"
+#include "serial.h"
 #include <util/delay.h>
-
-void led()
-{
-    TOG_BIT(PORTC, 0);
-}
-
-void turnoff(void *arg)
-{
-    uint8_t timer_id = (uint8_t)arg;
-    timer_cancel(timer_id);
-}
+#include "controller.h"
 
 int main()
 {
-    SET_BIT(DDRC, 0);
-
-    CLR_BIT(PORTC, 0);
-
-    timer_init();
-
-    uint8_t timer_id = timer_set_interval(1000, led);
+    controller_init();
+    serial_init(9600);
 
     while (true)
     {
-        timer_update();
-
-        timer_set_timeout_arg(5000, turnoff, (void *)timer_id);
+        _delay_ms(200);
+        if (get_key(RIGHT))
+            serial_print("RIGHT");
+        if (get_key(LEFT))
+            serial_print("LEFT");
+        if (get_key(UP))
+            serial_print("UP");
+        if (get_key(DOWN))
+            serial_print("DOWN");
+        if (get_key(START))
+            serial_print("START");
+        if (get_key(BACK))
+            serial_print("BACK");
     }
 }
