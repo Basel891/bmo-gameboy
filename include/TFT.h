@@ -48,6 +48,5 @@ void TFT_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color
 void TFT_DrawCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color);
 void TFT_FillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color);
 void TFT_DrawChar_Fast(uint8_t x, uint8_t y, char c, uint16_t color, uint16_t bg_color, uint8_t size);
-#define TFT_DrawChar TFT_DrawChar_Fast
 void TFT_DrawString(uint8_t x, uint8_t y, const char *str, uint16_t color, uint16_t bg_color, uint8_t size);
 void TFT_DrawImage(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint16_t *bitmap);
