@@ -5,26 +5,23 @@
 #include "serial.h"
 #include <util/delay.h>
 #include "controller.h"
+#include "SPI.h"
+#include "TFT.h"
 
 int main()
 {
+    SPI_Init();
+    TFT_INIT();
+
     controller_init();
-    serial_init(9600);
+    char* x="basel 3m eyad ";
+    
+    TFT_DrawString(0,0,x,TFT_RED,TFT_BLACK,1);
 
     while (true)
     {
-        _delay_ms(200);
-        if (get_key(RIGHT))
-            serial_print("RIGHT");
-        if (get_key(LEFT))
-            serial_print("LEFT");
-        if (get_key(UP))
-            serial_print("UP");
-        if (get_key(DOWN))
-            serial_print("DOWN");
-        if (get_key(START))
-            serial_print("START");
-        if (get_key(BACK))
-            serial_print("BACK");
+
+
+
     }
 }

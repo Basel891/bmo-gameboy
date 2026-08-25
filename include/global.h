@@ -1,4 +1,4 @@
-#ifndef _GLOBAL_
+#pragma once
 
 #define F_CPU 16000000UL
 
@@ -11,4 +11,4 @@
 #define OUTPUT 1
 #define INPUT 0
 
-#endif
+
