@@ -49,4 +49,11 @@ void TFT_DrawCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color);
 void TFT_FillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color);
 void TFT_DrawChar_Fast(uint8_t x, uint8_t y, char c, uint16_t color, uint16_t bg_color, uint8_t size);
 void TFT_DrawString(uint8_t x, uint8_t y, const char *str, uint16_t color, uint16_t bg_color, uint8_t size);
-void TFT_DrawImage(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint16_t *bitmap);
+void TFT_DrawBitmap1Bit_Scaled_Clipped(int16_t x, int16_t y, const uint8_t *bitmap, 
+                                      uint8_t w, uint8_t h, uint16_t color, 
+                                      uint16_t bg_color, uint8_t scale);
+
+     void TFT_DrawImageRGB565_Scaled_Clipped(int16_t x, int16_t y, const uint16_t *image, 
+                                        uint8_t w, uint8_t h, uint8_t scale);
+                                        
+                                        
