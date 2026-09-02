@@ -44,6 +44,7 @@ typedef struct
     bool active;          // Obstacle active flag
 } Obstacle;
 
+void DinoGame_Init(void);
 void DinoGame_Reset(void);
 void DinoGame_ProcessInput(void);
 void DinoGame_UpdatePhysics(void);

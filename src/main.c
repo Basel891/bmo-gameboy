@@ -1,18 +1,21 @@
 #include <avr/io.h>
 #include <stdbool.h>
+#include <util/delay.h>
 
 #include "controller.h"
 #include "TFT.h"
 #include "SPI.h"
 #include "menu.h"
+#include "dino.h"
 
 typedef enum
 {
     MENU,
     TETRIS,
     SNAKE,
-    PONG
-} GameState;
+    PONG,
+    DINO
+} AppState;
 
 int main(void)
 {
@@ -32,7 +35,7 @@ int main(void)
 
     menu();
 
-    GameState state = MENU;
+    AppState state = MENU;
 
     while (true)
     {
@@ -69,6 +72,29 @@ int main(void)
                     state = PONG;
                     TFT_DrawString(20, 60, "pong", TFT_RED, TFT_BLACK, 1);
                 }
+                else if (menu_get_selected() == 3)
+                {
+                    state = DINO;
+                    DinoGame_Init();
+                }
+            }
+        }
+        else if (state == DINO)
+        {
+            DinoGame_ProcessInput();
+
+            if (DinoGame_GetState() == GAME_STATE_EXIT)
+            {
+                state = MENU;
+                TFT_FillScreen(TFT_BLACK);
+                menu();
+            }
+            else
+            {
+                DinoGame_UpdatePhysics();
+                DinoGame_CheckCollision();
+                DinoGame_Render();
+                _delay_ms(30);
             }
         }
         else
