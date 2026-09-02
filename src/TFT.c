@@ -183,24 +183,32 @@ void TFT_DrawPixel(uint8_t x, uint8_t y, uint16_t color)
     TFT_sendData((uint8_t)(color & 0xFF));
 }
 
-void TFT_FillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color)
+void TFT_FillRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint16_t color)
 {
 
-    if ((x >= TFT_WIDTH) || (y >= TFT_HEIGHT))
+    if (x >= TFT_WIDTH || y >= TFT_HEIGHT || (x + w) <= 0 || (y + h) <= 0) {
         return;
-    if ((x + w - 1) >= TFT_WIDTH)
-        w = TFT_WIDTH - x;
-    if ((y + h - 1) >= TFT_HEIGHT)
-        h = TFT_HEIGHT - y;
+    }
 
-    TFT_SetAddrWindow(x, y, x + w - 1, y + h - 1);
+    // 2. Clip negative starting coordinates
+    int16_t x0 = (x < 0) ? 0 : x;
+    int16_t y0 = (y < 0) ? 0 : y;
 
+    // 3. Clip positive ending coordinates
+    int16_t x1 = x + w - 1;
+    int16_t y1 = y + h - 1;
+    if (x1 >= TFT_WIDTH)  x1 = TFT_WIDTH - 1;
+    if (y1 >= TFT_HEIGHT) y1 = TFT_HEIGHT - 1;
+
+    // 4. Set hardware display boundary window
+    TFT_SetAddrWindow((uint8_t)x0, (uint8_t)y0, (uint8_t)x1, (uint8_t)y1);
+
+    // 5. Send pixel stream
     uint8_t high_byte = (uint8_t)(color >> 8);
-    uint8_t low_byte = (uint8_t)(color & 0xFF);
-    uint16_t total_pixels = w * h;
+    uint8_t low_byte  = (uint8_t)(color & 0xFF);
+    uint16_t total_pixels = (uint16_t)(x1 - x0 + 1) * (uint16_t)(y1 - y0 + 1);
 
-    for (uint16_t i = 0; i < total_pixels; i++)
-    {
+    for (uint16_t i = 0; i < total_pixels; i++) {
         TFT_sendData(high_byte);
         TFT_sendData(low_byte);
     }

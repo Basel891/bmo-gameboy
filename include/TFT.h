@@ -40,7 +40,7 @@ void TFT_SetAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1); // set t
 void TFT_DrawPixel(uint8_t x, uint8_t y, uint16_t color) ;
 
 //layer 2
-void TFT_FillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);   //to make a colorful  rectangle 
+void TFT_FillRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint16_t color);   //to make a colorful  rectangle 
 void TFT_FillScreen(uint16_t color); 
 void TFT_DrawHLine(uint8_t x, uint8_t y, uint8_t w, uint16_t color);          //to make a horizontal line   
 void TFT_DrawVLine(uint8_t x, uint8_t y, uint8_t h, uint16_t color);          //to make vertical line         

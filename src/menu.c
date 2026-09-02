@@ -7,33 +7,41 @@ static uint8_t selected_game = 0;
 
 void menu(void)
 {
-    TFT_DrawString(20, 20, "BMO game", TFT_RED, TFT_BLACK, 1);
+    TFT_DrawString(20, 10, "BMO game", TFT_RED, TFT_BLACK, 1);
 
     if (selected_game == 0)
-        TFT_DrawString(5, 50, ">>", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 35, ">>", TFT_RED, TFT_BLACK, 1);
     else
-        TFT_DrawString(5, 50, "  ", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 35, "  ", TFT_RED, TFT_BLACK, 1);
 
-    TFT_DrawString(20, 50, "TETRIS", TFT_RED, TFT_BLACK, 1);
+    TFT_DrawString(20, 35, "TETRIS", TFT_RED, TFT_BLACK, 1);
 
     if (selected_game == 1)
-        TFT_DrawString(5, 80, ">>", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 55, ">>", TFT_RED, TFT_BLACK, 1);
     else
-        TFT_DrawString(5, 80, "  ", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 55, "  ", TFT_RED, TFT_BLACK, 1);
 
-    TFT_DrawString(20, 80, "snake", TFT_RED, TFT_BLACK, 1);
+    TFT_DrawString(20, 55, "snake", TFT_RED, TFT_BLACK, 1);
 
     if (selected_game == 2)
-        TFT_DrawString(5, 110, ">>", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 75, ">>", TFT_RED, TFT_BLACK, 1);
     else
-        TFT_DrawString(5, 110, "  ", TFT_RED, TFT_BLACK, 1);
+        TFT_DrawString(5, 75, "  ", TFT_RED, TFT_BLACK, 1);
 
-    TFT_DrawString(20, 110, "pong", TFT_RED, TFT_BLACK, 1);
+    TFT_DrawString(20, 75, "pong", TFT_RED, TFT_BLACK, 1);
+
+    if (selected_game == 3)
+        TFT_DrawString(5, 95, ">>", TFT_RED, TFT_BLACK, 1);
+    else
+        TFT_DrawString(5, 95, "  ", TFT_RED, TFT_BLACK, 1);
+       
+    TFT_DrawString(20,95,"DINO",TFT_RED,TFT_BLACK,1)    ;
+
 }
 
 void menu_down(void)
 {
-    if (selected_game < 2)
+    if (selected_game < 3)
     {
         selected_game++;
     }
