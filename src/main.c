@@ -75,7 +75,6 @@ int main(void)
                 }
                 else if (menu_get_selected() == 3)
                 {
-                    state = DINO;
                     play_dino();
                     TFT_FillScreen(TFT_BLACK);
                     menu();

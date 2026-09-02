@@ -30,7 +30,7 @@ void play_dino(void)
 
     while (current_state != GAME_STATE_EXIT)
     {
-        // 1. PROCESS INPUT
+        //how we escape from the game 
         if (get_key(BACK))
         {
             current_state = GAME_STATE_EXIT;
@@ -39,6 +39,7 @@ void play_dino(void)
 
         switch (current_state)
         {
+            //restart the game for both of two states
             case GAME_STATE_START:
             case GAME_STATE_GAME_OVER:
                 if (get_key(START))
@@ -56,12 +57,12 @@ void play_dino(void)
                     cactus.y = GROUND_Y - OBSTACLE_H;
                     cactus.old_x = cactus.x;
                     cactus.old_y = cactus.y;
-                    cactus.active = true;
+                    cactus.active = true;          //when it is true it means that the dino does not pass it 
 
                     // Reset Score & Physics Speed
                     score = 0;
                     old_score = 0xFFFF;
-                    scroll_speed = 3;
+                    scroll_speed = 3;               //scroll speed up to 8
 
                     current_state = GAME_STATE_RUNNING;
                     rendered_state = GAME_STATE_RUNNING;
@@ -71,6 +72,9 @@ void play_dino(void)
                 break;
 
             case GAME_STATE_RUNNING:
+
+            //moving logic
+
                 if (get_key(UP) && !dino.is_jumping)
                 {
                     dino.vy = JUMP_IMPULSE;
@@ -82,7 +86,7 @@ void play_dino(void)
                 break;
         }
 
-        // 2. UPDATE PHYSICS & CHECK COLLISION
+        // UPDATE PHYSICS & CHECK COLLISION
         if (current_state == GAME_STATE_RUNNING)
         {
             dino.old_y = dino.y;
@@ -176,7 +180,7 @@ void play_dino(void)
                 OBSTACLE_W, OBSTACLE_H, 0xF800, 0x0000, 1
             );
 
-            // Draw HUD Score
+            // Drawing Score logic
             if (score != old_score)
             {
                 char score_str[7];
