@@ -15,7 +15,7 @@ typedef enum
     SNAKE,
     PONG,
     DINO
-} APPSTATE;
+} GAMESTATE;
 
 int main(void)
 {
@@ -36,7 +36,7 @@ int main(void)
 
     menu();
 
-   APPSTATE state = MENU;
+   GAMESTATE state = MENU;
 
     while (true)
     {
