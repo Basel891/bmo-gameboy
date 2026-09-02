@@ -15,7 +15,7 @@ typedef enum
     SNAKE,
     PONG,
     DINO
-} AppState;
+} APPSTATE;
 
 int main(void)
 {
@@ -29,13 +29,14 @@ int main(void)
 
     while (!get_key(START))
     {
+    
     }
 
     TFT_FillScreen(TFT_BLACK);
 
     menu();
 
-    AppState state = MENU;
+   APPSTATE state = MENU;
 
     while (true)
     {
@@ -75,26 +76,10 @@ int main(void)
                 else if (menu_get_selected() == 3)
                 {
                     state = DINO;
-                    DinoGame_Init();
+                    play_dino();
+                    TFT_FillScreen(TFT_BLACK);
+                    menu();
                 }
-            }
-        }
-        else if (state == DINO)
-        {
-            DinoGame_ProcessInput();
-
-            if (DinoGame_GetState() == GAME_STATE_EXIT)
-            {
-                state = MENU;
-                TFT_FillScreen(TFT_BLACK);
-                menu();
-            }
-            else
-            {
-                DinoGame_UpdatePhysics();
-                DinoGame_CheckCollision();
-                DinoGame_Render();
-                _delay_ms(30);
             }
         }
         else

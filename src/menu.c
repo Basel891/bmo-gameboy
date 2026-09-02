@@ -34,8 +34,9 @@ void menu(void)
         TFT_DrawString(5, 95, ">>", TFT_RED, TFT_BLACK, 1);
     else
         TFT_DrawString(5, 95, "  ", TFT_RED, TFT_BLACK, 1);
+       
+    TFT_DrawString(20,95,"DINO",TFT_RED,TFT_BLACK,1)    ;
 
-    TFT_DrawString(20, 95, "DINO RUNNER", TFT_RED, TFT_BLACK, 1);
 }
 
 void menu_down(void)
