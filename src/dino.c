@@ -29,8 +29,8 @@ static void DrawHUDScore(void) {
 
         // Clear score numerical area first to prevent trailing digits from old scores
         TFT_FillRect(135, 5, 25, 8, 0x0000);
-        TFT_DrawString(95, 5, "SCORE:", 0x07E0, 0x0000); 
-        TFT_DrawString(135, 5, score_str, 0xFFFF, 0x0000);
+        TFT_DrawString(95, 5, "SCORE:", 0x07E0, 0x0000,1); 
+        TFT_DrawString(135, 5, score_str, 0xFFFF, 0x0000,1);
 
         old_score = score;
     }
@@ -148,9 +148,9 @@ void DinoGame_Render(void) {
     if (current_state == GAME_STATE_START) {
         if (rendered_state != GAME_STATE_START) {
             TFT_FillRect(0, 0, DINO_SCREEN_WIDTH, DINO_SCREEN_HEIGHT, 0x0000);
-            TFT_DrawString(35, 40, "DINO RUNNER", 0xFFE0, 0x0000);
-            TFT_DrawString(30, 70, "START: Play", 0x07E0, 0x0000);
-            TFT_DrawString(30, 85, "BACK: Exit", 0xF800, 0x0000);
+            TFT_DrawString(35, 40, "DINO RUNNER", 0xFFE0, 0x0000,1);
+            TFT_DrawString(30, 70, "START: Play", 0x07E0, 0x0000,1);
+            TFT_DrawString(30, 85, "BACK: Exit", 0xF800, 0x0000,1);
             rendered_state = GAME_STATE_START;
         }
         return;
@@ -160,9 +160,9 @@ void DinoGame_Render(void) {
         if (rendered_state != GAME_STATE_GAME_OVER) {
             // Draw Game Over Panel Overlay ONCE
             TFT_FillRect(20, 30, 120, 70, 0x0000);
-            TFT_DrawString(40, 40, "GAME OVER", 0xF800, 0x0000);
-            TFT_DrawString(25, 65, "START: Restart", 0x07E0, 0x0000);
-            TFT_DrawString(25, 80, "BACK: Exit", 0xFFFF, 0x0000);
+            TFT_DrawString(40, 40, "GAME OVER", 0xF800, 0x0000,1);
+            TFT_DrawString(25, 65, "START: Restart", 0x07E0, 0x0000,1);
+            TFT_DrawString(25, 80, "BACK: Exit", 0xFFFF, 0x0000,1);
             rendered_state = GAME_STATE_GAME_OVER;
         }
         return;
