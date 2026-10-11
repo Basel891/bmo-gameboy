@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <avr/io.h>
@@ -8,13 +7,13 @@
 
 #include "controller.h"
 
-#define DINO_SCREEN_WIDTH   160
-#define DINO_SCREEN_HEIGHT  128
+#define DINO_SCREEN_WIDTH 160
+#define DINO_SCREEN_HEIGHT 128
 
 #define GROUND_Y 105
 #define DINO_X_POS 20
-#define GRAVITY 1
-#define JUMP_IMPULSE -8
+#define GRAVITY 2
+#define JUMP_IMPULSE -13
 
 #define DINO_W 16     // Width of Dino sprite
 #define DINO_H 16     // Height of Dino sprite

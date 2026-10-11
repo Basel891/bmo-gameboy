@@ -10,10 +10,10 @@
 #define bird_color 0xf708
 
 #define PIPE_WIDTH 18
-#define INITIAL_GAP 58    // Starting vertical gap
+#define INITIAL_GAP 58 // Starting vertical gap
+#define INITIAL_SPACING 100
 #define MIN_GAP 38        // Hardest vertical gap allowed
-#define PIPE_SPACING 100  // Spacing between consecutive pipes
-#define MAX_PIPES 3       // Sufficient for landscape screens
+#define MAX_PIPES 5       // Sufficient for landscape screens
 #define PIPE_COLOR 0x07E0 // RGB565 Green
 
 const uint8_t bird[] PROGMEM = {
@@ -34,6 +34,7 @@ uint16_t prev_score = 0;
 uint16_t high_score = 0;
 uint8_t pipe_speed = 2;
 uint8_t current_gap = INITIAL_GAP;
+uint8_t pipe_spacing = INITIAL_SPACING;
 
 void spawn_pipe(uint8_t index, int16_t start_x)
 {
@@ -53,8 +54,9 @@ void init_pipes()
 {
     score = 0;
     prev_score = 0;
-    pipe_speed = 2;
+    pipe_speed = 1;
     current_gap = INITIAL_GAP;
+    pipe_spacing = INITIAL_SPACING; // Reset spacing on game restart
 
     for (uint8_t i = 0; i < MAX_PIPES; i++)
     {
@@ -68,18 +70,24 @@ void init_pipes()
 
 void update_difficulty()
 {
-    // Smooth speed progression: starts at 2, increases every 5 points up to 4
-    pipe_speed = 2 + (score / 5);
-    if (pipe_speed > 4)
-        pipe_speed = 4;
+    // Smooth speed progression: starts at 1, increases every 20 points up to 3
+    pipe_speed = 1 + (score / 25);
+    if (pipe_speed > 3)
+        pipe_speed = 3;
 
-    // Shrink gap slightly every 3 points to increase precision demands
-    if (INITIAL_GAP > (score / 3))
-    {
-        current_gap = INITIAL_GAP - (score / 3);
-        if (current_gap < MIN_GAP)
-            current_gap = MIN_GAP;
-    }
+    // Shrink gap slightly as score increases
+    int16_t temp_gap = INITIAL_GAP - (score / 3);
+    if (temp_gap < MIN_GAP)
+        current_gap = MIN_GAP;
+    else
+        current_gap = (uint8_t)temp_gap;
+
+    // Decrease spacing slightly every 2 scores down to a minimum of 60
+    int16_t temp_spacing = INITIAL_SPACING - (score / 2);
+    if (temp_spacing < 60)
+        pipe_spacing = 60;
+    else
+        pipe_spacing = (uint8_t)temp_spacing;
 }
 
 void update_and_draw_pipes(uint8_t bird_x)
@@ -127,8 +135,8 @@ void update_and_draw_pipes(uint8_t bird_x)
         }
 
         // --- MULTI-PIPE SPAWN LOGIC ---
-        // If this pipe moved past the spacing threshold, spawn next pipe if inactive
-        if (old_x >= (TFT_WIDTH - PIPE_SPACING) && new_x < (TFT_WIDTH - PIPE_SPACING))
+        // If this pipe moved past the dynamic spacing threshold, spawn next available pipe
+        if (old_x >= (TFT_WIDTH - pipe_spacing) && new_x < (TFT_WIDTH - pipe_spacing))
         {
             for (uint8_t j = 0; j < MAX_PIPES; j++)
             {
@@ -147,7 +155,6 @@ void update_and_draw_pipes(uint8_t bird_x)
         }
     }
 }
-
 void draw_score()
 {
 
@@ -241,15 +248,15 @@ void play_flappy_bird()
 
                 if (get_key(UP))
                 {
-                    velocity = -5;
+                    velocity = -3;
                 }
 
                 // Smooth Gravity Simulation
                 gravity_counter++;
-                if (gravity_counter >= 2)
+                if (gravity_counter >= 4)
                 {
                     gravity_counter = 0;
-                    if (velocity < 3)
+                    if (velocity < 2)
                     {
                         velocity++;
                     }
