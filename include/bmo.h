@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#define BMO_BG_COLOR 0xD736   // Light mint green
+#define BMO_BG_COLOR 0x76EF   // Light mint green
 #define BMO_BLACK 0x0000      // Black border & eyes
 #define BMO_WHITE 0xFFFF      // White teeth
 #define BMO_MOUTH_DARK 0x0280 // Dark green mouth interior

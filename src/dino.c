@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 #include "TFT.h"
+#include "timer.h"
 
 const uint8_t PROGMEM dino_frame0[] = {
 0x00, 0x00,
@@ -31,6 +32,8 @@ const uint8_t PROGMEM cactus_sprite[] = {
 void play_dino(void)
 {
     // All game variables declared locally on the stack to save static RAM
+  uint32_t current_time= millis();
+    uint32_t frame =0;
     PlayerDino dino;
     Obstacle cactus;
     uint16_t score = 0;
@@ -40,6 +43,8 @@ void play_dino(void)
     GameState rendered_state = (GameState)0xFF;
 
     TFT_FillRect(0, 0, DINO_SCREEN_WIDTH, DINO_SCREEN_HEIGHT, 0x0000);
+
+    if(current_time-frame>=16){
 
     while (current_state != GAME_STATE_EXIT)
     {
@@ -209,4 +214,5 @@ void play_dino(void)
 
         _delay_ms(30);
     }
+}
 }
