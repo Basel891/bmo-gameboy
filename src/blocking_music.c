@@ -9,6 +9,9 @@ hardware timers.
 #include "tone.h"
 #include "util/delay.h"
 #include "music.h"
+#include <stdbool.h>
+#include "global.h"
+#include <string.h>
 #define isdigit(n) (n >= '0' && n <= '9')
 
 void play_rtttl(const char *p)
@@ -145,7 +148,7 @@ void play_rtttl(const char *p)
         // --- BLUEJAY FREQUENCY MATH ---
         if (noteChar == 'p')
         {
-            delay(round(durationMs));
+            _delay_ms(round(durationMs));
         }
         else
         {
@@ -190,9 +193,9 @@ void play_rtttl(const char *p)
             unsigned long pauseDuration = round(durationMs) - toneDuration;
 
             tone(tonePin_Arduino, round(bluejayFreq), 0);
-            delay(toneDuration);
+            _delay_ms(toneDuration);
             noTone(tonePin_Arduino);
-            delay(pauseDuration);
+            _delay_ms(pauseDuration);
         }
     }
 }

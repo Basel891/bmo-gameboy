@@ -9,6 +9,10 @@ This version is non blocking and uses hardware timers to calculate all the timin
 
 #include "music.h"
 #include "tone.h"
+#include "timer.h"
+#include "global.h"
+#include <stdbool.h>
+#include <string.h>
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
