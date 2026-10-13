@@ -12,6 +12,8 @@
 #include "serial.h"
 #include "flappybird.h"
 #include "Snake.h"
+#include "adc.h"
+#include "stdio.h"
 
 typedef enum
 {
@@ -26,6 +28,7 @@ int main(void)
     controller_init();
     timer_init();
     serial_init(9600);
+    adc_init();
 
     TFT_DrawBMOFace();
 
@@ -33,6 +36,8 @@ int main(void)
 
     uint32_t last_blink = 0;
     uint8_t eyes_closed = 0;
+
+    char buf[12];
 
     while (true)
     {
@@ -72,6 +77,18 @@ int main(void)
         }
         else if (state == MENU)
         {
+
+            uint16_t milli_volt = battery_get_mv();
+            uint8_t battery_percent = battery_get_percentage(milli_volt);
+
+            // Format as Voltage: "7.42V"
+            sprintf(buf, "%u.%02uV", milli_volt / 1000, (milli_volt % 1000) / 10);
+            TFT_DrawString(TFT_WIDTH - 20, 10, buf, TFT_WHITE, TFT_BLACK, 1);
+
+            // OR Format as Percentage: "85%"
+            sprintf(buf, "%u%%", battery_percent);
+            TFT_DrawString(TFT_WIDTH - 60, 10, buf, TFT_WHITE, TFT_BLACK, 1);
+
             if (get_key(DOWN))
             {
                 menu_down();
