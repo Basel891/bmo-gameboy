@@ -3,10 +3,13 @@
 
 #include <avr/io.h>
 
-#define BATTERY_ADC_PIN 6
-
+// Initialize the ADC hardware (AVcc reference, 125kHz clock)
 void adc_init(void);
-uint16_t battery_get_mv(void);
-uint8_t battery_get_percentage(uint16_t mvolts);
+
+// Read any raw 10-bit ADC channel (0 to 7)
+uint16_t adc_read(uint8_t channel);
+
+// Read and average multiple samples from any channel (0 to 7)
+uint16_t adc_read_averaged(uint8_t channel, uint8_t samples);
 
 #endif // ADC_H

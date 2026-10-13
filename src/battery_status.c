@@ -47,7 +47,6 @@ static void render_battery_status(uint16_t milli_volt, uint8_t percentage)
 
 void battery_init(void)
 {
-    adc_init();
     last_adc_time = 0;
     prev_battery_percent = 255;
     prev_milli_volt = 0;
@@ -94,4 +93,24 @@ void battery_update(uint32_t current_time)
             prev_milli_volt = milli_volt;
         }
     }
+}
+
+uint16_t battery_get_mv(void)
+{
+    uint32_t raw_adc = adc_read_averaged(BATTERY_ADC_PIN, 4);
+
+    // Calculate battery mV (with offset rounding)
+    uint32_t battery_mv = ((raw_adc * 10000UL) + 512UL) / 1024UL;
+    return (uint16_t)battery_mv;
+}
+
+uint8_t battery_get_percentage(uint16_t mvolts)
+{
+    if (mvolts <= 6000)
+        return 0;
+    if (mvolts >= 8350)
+        return 100;
+
+    // Map 6.0V (0%) to 8.4V (100%)
+    return (uint8_t)(((uint32_t)(mvolts - 6000) * 100) / (8350 - 6000));
 }

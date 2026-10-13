@@ -13,6 +13,7 @@
 #include "flappybird.h"
 #include "Snake.h"
 #include "stdio.h"
+#include "adc.h"
 #include "battery_status.h"
 
 typedef enum
@@ -29,7 +30,7 @@ int main(void)
     timer_init();
     serial_init(9600);
     battery_init();
-
+    adc_init();
     TFT_DrawBMOFace();
 
     GAMESTATE state = BMO_SCREEN;
