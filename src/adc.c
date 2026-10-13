@@ -29,7 +29,7 @@ uint16_t battery_get_mv(void)
     // Calculate voltage in mV:
     // V_adc = (raw_adc * 5000) / 1024
     // V_bat = V_adc * 2 (100k/100k divider cuts voltage in half)
-    uint32_t battery_mv = (raw_adc * 5000 * 2) / 1024;
+    uint32_t battery_mv = ((raw_adc * 10000UL) + 512UL) / 1024UL;
 
     return (uint16_t)battery_mv;
 }
@@ -38,9 +38,9 @@ uint8_t battery_get_percentage(uint16_t mvolts)
 {
     if (mvolts <= 6000)
         return 0;
-    if (mvolts >= 8400)
+    if (mvolts >= 8350)
         return 100;
 
     // Map 6.0V (0%) to 8.4V (100%)
-    return (uint8_t)(((uint32_t)(mvolts - 6000) * 100) / 2400);
+    return (uint8_t)(((uint32_t)(mvolts - 6000) * 100) / (8350 - 6000));
 }

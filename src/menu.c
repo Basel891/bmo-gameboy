@@ -7,7 +7,7 @@ static uint8_t selected_game = 0;
 
 void menu(void)
 {
-    TFT_DrawString(20, 10, "BMO game", TFT_RED, TFT_BLACK, 1);
+    TFT_DrawString(20, 20, "BMO game", TFT_RED, TFT_BLACK, 1);
 
     if (selected_game == 0)
         TFT_DrawString(5, 35, ">>", TFT_RED, TFT_BLACK, 1);
