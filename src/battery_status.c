@@ -3,6 +3,7 @@
 #include "TFT.h"
 #include <stdio.h>
 #include "global.h"
+#include "menu.h"
 
 // Encapsulated module state
 static uint32_t last_adc_time = 0;
@@ -18,11 +19,11 @@ static void render_battery_status(uint16_t milli_volt, uint8_t percentage)
     char buf[10];
 
     // Clear previous header text area
-    TFT_FillRect(0, 2, TFT_WIDTH, 12, TFT_BLACK);
+    TFT_FillRect(0, 2, TFT_WIDTH, 12, MENU_BACKGROUND);
 
     // Battery Icon (Y: 4 to 12)
     TFT_FillRect(104 + TEXT_SHIFT, 4, 18, 9, TFT_WHITE);
-    TFT_FillRect(105 + TEXT_SHIFT, 5, 16, 7, TFT_BLACK);
+    TFT_FillRect(105 + TEXT_SHIFT, 5, 16, 7, MENU_BACKGROUND);
     TFT_FillRect(122 + TEXT_SHIFT, 6, 2, 5, TFT_WHITE);
 
     uint8_t bar_width = (percentage * 14) / 100;
@@ -34,11 +35,11 @@ static void render_battery_status(uint16_t milli_volt, uint8_t percentage)
 
     // Centered Percentage (Y = 4)
     sprintf(buf, "%3u%%", percentage);
-    TFT_DrawString(74 + TEXT_SHIFT, 4, buf, TFT_WHITE, TFT_BLACK, 1);
+    TFT_DrawString(74 + TEXT_SHIFT, 4, buf, TFT_WHITE, MENU_BACKGROUND, 1);
 
     // Centered Voltage (Y = 4)
     sprintf(buf, "%u.%02uV", milli_volt / 1000, (milli_volt % 1000) / 10);
-    TFT_DrawString(2, 4, buf, TFT_WHITE, TFT_BLACK, 1);
+    TFT_DrawString(2, 4, buf, TFT_WHITE, MENU_BACKGROUND, 1);
 
     // Separator line
     TFT_DrawHLine_Fast(0, 16, TFT_WIDTH, TFT_WHITE);

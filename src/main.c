@@ -68,7 +68,7 @@ int main(void)
                 if (get_key(START))
                 {
 
-                    TFT_FillScreen(TFT_BLACK);
+                    TFT_FillScreen(MENU_BACKGROUND);
                     menu();
                     battery_force_redraw();
                     state = MENU;
@@ -112,21 +112,20 @@ int main(void)
                 }
                 else if (menu_get_selected() == 1)
                 {
-                    TFT_DrawString(20, 60, "snake", TFT_RED, TFT_BLACK, 1);
                     play_snake();
-                    TFT_FillScreen(TFT_BLACK);
+                    TFT_FillScreen(MENU_BACKGROUND);
                     menu();
                 }
                 else if (menu_get_selected() == 2)
                 {
                     play_flappy_bird();
-                    TFT_FillScreen(TFT_BLACK);
+                    TFT_FillScreen(MENU_BACKGROUND);
                     menu();
                 }
                 else if (menu_get_selected() == 3)
                 {
                     play_dino();
-                    TFT_FillScreen(TFT_BLACK);
+                    TFT_FillScreen(MENU_BACKGROUND);
                     menu();
                 }
             }

@@ -329,6 +329,4 @@ void play_flappy_bird()
             }
         }
     }
-
-    TFT_FillScreen(TFT_BLACK);
 }
