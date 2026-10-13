@@ -1,14 +1,14 @@
 /*
-This code is based on bluejay's RTTL parser rewritten in cpp instead of javascript.
+This code is based on bluejay's RTTL parser rewritten in c instead of javascript.
 
 This version is non blocking and uses hardware timers to calculate all the timings for the notes.
 
 */
 
-#include <Arduino.h>
 #include <math.h>
 
 #include "music.h"
+#include "tone.h"
 
 #define isdigit(n) (n >= '0' && n <= '9')
 

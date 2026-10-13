@@ -1,13 +1,13 @@
 /*
-This code is based on bluejay's RTTL parser rewritten in cpp instead of javascript.
+This code is based on bluejay's RTTL parser rewritten in c instead of javascript.
 
-This version is blocking and uses delays opposite to the other music.cpp which works as a state machine and uses
+This version is blocking and uses delays opposite to the other music.c which works as a state machine and uses
 hardware timers.
 */
 
-#include <Arduino.h>
 #include <math.h>
-
+#include "tone.h"
+#include "util/delay.h"
 #include "music.h"
 #define isdigit(n) (n >= '0' && n <= '9')
 
