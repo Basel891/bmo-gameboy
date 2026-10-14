@@ -1,20 +1,36 @@
 #include "IRDriver.h"
-#include <Arduino.h>
+#include "timer.h"
+#include "global.h"
 #include <avr/io.h>
 
-// ---- IR receiver pin configuration (change here only) ----
-#define IR_DDR    DDRA
-#define IR_PORT   PORTA
-#define IR_PINR   PINA
-#define IR_BIT    7
+// ---- IR receiver pin configuration (defaults defined in IRDriver.h) ----
+#ifndef IR_DDR
+#define IR_DDR    DDRD
+#endif
+
+#ifndef IR_PORT
+#define IR_PORT   PORTD
+#endif
+
+#ifndef IR_PIN
+#define IR_PIN    PIND
+#endif
+
+#ifndef IR_PINR
+#define IR_PINR   IR_PIN
+#endif
+
+#ifndef IR_BIT
+#define IR_BIT    PD7
+#endif
 // -----------------------------------------------------------
 
 static inline uint8_t ir_read(void) {
-    return (IR_PINR & (1 << IR_BIT)) ? HIGH : LOW;
+    return (IR_PIN & (1 << IR_BIT)) ? HIGH : LOW;
 }
 
 void ir_driver_init(uint8_t pin) {
-    (void)pin;                      // pin is fixed at compile time via IR_* macros
+    (void)pin;                      // pin is fixed at compile time via IR_* macros (default: PD7)
     IR_DDR &= ~(1 << IR_BIT);       // input
     IR_PORT &= ~(1 << IR_BIT);      // pull-up off (VS1838/TSOP drive the line themselves)
 }
