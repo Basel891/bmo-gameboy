@@ -1,38 +1,20 @@
 #include "IRDriver.h"
 #include "timer.h"
 #include "global.h"
+#include <adc.h>
 #include <avr/io.h>
 
-// ---- IR receiver pin configuration (defaults defined in IRDriver.h) ----
-#ifndef IR_DDR
-#define IR_DDR    DDRD
-#endif
+#define IR_PIN 7
+#define IR_THRESHOLD 512 // Threshold for ADC reading (0-1023) to differentiate HIGH/LOW
 
-#ifndef IR_PORT
-#define IR_PORT   PORTD
-#endif
-
-#ifndef IR_PIN
-#define IR_PIN    PIND
-#endif
-
-#ifndef IR_PINR
-#define IR_PINR   IR_PIN
-#endif
-
-#ifndef IR_BIT
-#define IR_BIT    PD7
-#endif
-// -----------------------------------------------------------
-
+// Fast read for analog pin A7 using a small sample count to preserve microsecond timing
 static inline uint8_t ir_read(void) {
-    return (IR_PIN & (1 << IR_BIT)) ? HIGH : LOW;
+    uint16_t adc_val = adc_read_averaged(IR_PIN, 16);      //honaaaaaaaaaaaaaaaaaaaaaaaa
+    return (adc_val > IR_THRESHOLD) ? HIGH : LOW;
 }
 
 void ir_driver_init(uint8_t pin) {
-    (void)pin;                      // pin is fixed at compile time via IR_* macros (default: PD7)
-    IR_DDR &= ~(1 << IR_BIT);       // input
-    IR_PORT &= ~(1 << IR_BIT);      // pull-up off (VS1838/TSOP drive the line themselves)
+    // Initialization placeholder if needed
 }
 
 // Call right after an edge: returns how long the pin stays at `level`
@@ -45,11 +27,12 @@ static uint32_t ir_measure(uint8_t level, uint32_t timeout_us) {
     return micros() - start;
 }
 
-uint32_t ir_driver_read_hex(void) {
-    // Wait for the falling edge that starts the 9 ms burst
+// Internal raw decoding function
+static uint32_t ir_driver_decode_raw(void) {
+    // If the line is idle HIGH, wait briefly for a start edge (max 1ms to keep frame timing smooth)
     uint32_t t0 = micros();
     while (ir_read() == HIGH) {
-        if (micros() - t0 > 10000) return 0;
+        if (micros() - t0 > 1000) return 0;
     }
 
     uint32_t mark = ir_measure(LOW, 10000);
@@ -75,4 +58,30 @@ uint32_t ir_driver_read_hex(void) {
     if ((uint8_t)(cmd ^ cmd_inv) != 0xFF) return 0;
 
     return data;   // addr | ~addr<<8 | cmd<<16 | ~cmd<<24
+}
+
+// Main read function with built-in anti-debouncing / repeat prevention
+uint32_t ir_driver_read_hex(void) {
+    static uint32_t last_hex = 0;
+    static uint8_t is_locked = 0;
+
+    uint32_t current_hex = ir_driver_decode_raw();
+
+    // If no button is currently being received (line idle / returning 0)
+    if (current_hex == 0) {
+        is_locked = 0;
+        last_hex = 0;
+        return 0;
+    }
+
+    // If the same button is held down, block repeat triggers until released
+    if (current_hex == last_hex && is_locked) {
+        return 0;
+    }
+
+    // New unique press detected
+    last_hex = current_hex;
+    is_locked = 1;
+
+    return current_hex;
 }

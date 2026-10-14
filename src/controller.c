@@ -1,10 +1,13 @@
 #include "controller.h"
+#include "timer.h"
+#include "IRDriver.h"
 #include <util/delay.h>
-#include <IRDriver.h>
 
 static uint8_t previous_states = 0b00000000;
+static uint32_t current_ir_signal = 0;
+static uint32_t last_poll_ms = 0;
 
-void controller_init()
+void controller_init(void)
 {
     // Sets pins DDR direction (0 as input)
     CLR_BIT(CONTROLLER_DDR, RIGHT);
@@ -21,40 +24,15 @@ void controller_init()
     SET_BIT(CONTROLLER_PORT, DOWN);
     SET_BIT(CONTROLLER_PORT, START);
     SET_BIT(CONTROLLER_PORT, BACK);
+
+    // Initialize IR receiver pin
+    ir_driver_init(0);
 }
 
-uint8_t get_key(uint8_t key)
-{
-    // Active-LOW  pin reads 0 when pressed, invert so 1 = pressed
-    uint8_t is_pressed = !GET_BIT(CONTROLLER_PIN, key);
-    uint8_t was_pressed = GET_BIT(previous_states, key);
-
-    // Initial press detected (1 now, 0 before)
-    if (is_pressed && !was_pressed)
-    {
-        SET_BIT(previous_states, key); // Mark as pressed
-        return 1;
-    }
-
-    // Button released (0 now)
-    if (!is_pressed)
-    {
-        CLR_BIT(previous_states, key); // Reset state for next press
-    }
-
-    return 0; // Returns 0 if holding continuously or if not pressed
-}
 uint32_t get_key_signal(void)
 {
     static uint32_t last_received_hex = 0;
     static uint8_t button_locked = 0;
-
-    // Define the hex codes for the buttons
-    const uint32_t UP_BUTTON     = 0xE0E006F9;
-    const uint32_t DOWN_BUTTON   = 0xE0E08679;
-    const uint32_t LEFT_BUTTON   = 0xE0E0A659;
-    const uint32_t RIGHT_BUTTON  = 0xE0E046B9;
-    const uint32_t RETURN_BUTTON = 0xE0E01AE5;
 
     uint32_t current_hex = ir_driver_read_hex();
 
@@ -76,21 +54,81 @@ uint32_t get_key_signal(void)
     last_received_hex = current_hex;
     button_locked = 1; // Lock until the driver returns 0 (released)
 
-    // Check which button code was received
+    // Check which button code was received and return its identifier
     switch (current_hex)
     {
         case UP_BUTTON:
-            return 1; // Up pressed
+            return UP_BUTTON;
         case DOWN_BUTTON:
-            return 2; // Down pressed
+            return DOWN_BUTTON;
         case LEFT_BUTTON:
-            return 3; // Left pressed
+            return LEFT_BUTTON;
         case RIGHT_BUTTON:
-            return 4; // Right pressed
+            return RIGHT_BUTTON;
         case RETURN_BUTTON:
-            return 5; // Return pressed
+            return RETURN_BUTTON;
+        case START_BUTTON:
+            return START_BUTTON;
         default:
             button_locked = 0; // Unknown code, unlock
             return 0;          // No matching button
     }
+}
+
+static void poll_inputs_if_needed(void)
+{
+    uint32_t now = millis();
+    if (now != last_poll_ms)
+    {
+        last_poll_ms = now;
+        current_ir_signal = get_key_signal();
+    }
+}
+
+uint8_t get_key(uint8_t key)
+{
+    poll_inputs_if_needed();
+
+    // Active-LOW pin reads 0 when pressed, invert so 1 = pressed
+    uint8_t is_pressed = !GET_BIT(CONTROLLER_PIN, key);
+
+    // Also check corresponding IR remote button
+    switch (key)
+    {
+        case UP:
+            if (current_ir_signal == UP_BUTTON) is_pressed = 1;
+            break;
+        case DOWN:
+            if (current_ir_signal == DOWN_BUTTON) is_pressed = 1;
+            break;
+        case LEFT:
+            if (current_ir_signal == LEFT_BUTTON) is_pressed = 1;
+            break;
+        case RIGHT:
+            if (current_ir_signal == RIGHT_BUTTON) is_pressed = 1;
+            break;
+        case START:
+            if (current_ir_signal == START_BUTTON) is_pressed = 1;
+            break;
+        case BACK:
+            if (current_ir_signal == RETURN_BUTTON) is_pressed = 1;
+            break;
+    }
+
+    uint8_t was_pressed = GET_BIT(previous_states, key);
+
+    // Initial press detected (1 now, 0 before)
+    if (is_pressed && !was_pressed)
+    {
+        SET_BIT(previous_states, key); // Mark as pressed
+        return 1;
+    }
+
+    // Button released (0 now)
+    if (!is_pressed)
+    {
+        CLR_BIT(previous_states, key); // Reset state for next press
+    }
+
+    return 0; // Returns 0 if holding continuously or if not pressed
 }
