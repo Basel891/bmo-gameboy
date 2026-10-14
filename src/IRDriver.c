@@ -2,35 +2,38 @@
 #include <Arduino.h>
 #include <avr/io.h>
 
+// ---- IR receiver pin configuration (change here only) ----
+#define IR_DDR    DDRA
+#define IR_PORT   PORTA
+#define IR_PINR   PINA
+#define IR_BIT    7
+// -----------------------------------------------------------
+
+static inline uint8_t ir_read(void) {
+    return (IR_PINR & (1 << IR_BIT)) ? HIGH : LOW;
+}
+
 void ir_driver_init(uint8_t pin) {
-    // Configure PA7 as input (Clear bit 7 in DDRA)
-    DDRA &= ~(1 << DDA7);
-    // Optional: Enable internal pull-up by setting PORTA7 high if needed
-    // PORTA |= (1 << PORTA7);
+    (void)pin;                      // pin is fixed at compile time via IR_* macros
+    IR_DDR &= ~(1 << IR_BIT);       // input
+    IR_PORT &= ~(1 << IR_BIT);      // pull-up off (VS1838/TSOP drive the line themselves)
 }
 
 // Call right after an edge: returns how long the pin stays at `level`
 // in microseconds, or 0 on timeout.
 static uint32_t ir_measure(uint8_t level, uint32_t timeout_us) {
     uint32_t start = micros();
-    // Read PINA directly to check PA7 state
-    uint8_t pin_val = (PINA & (1 << PINA7)) ? HIGH : LOW;
-    
-    while (pin_val == level) {
+    while (ir_read() == level) {
         if (micros() - start > timeout_us) return 0;
-        pin_val = (PINA & (1 << PINA7)) ? HIGH : LOW;
     }
     return micros() - start;
 }
 
 uint32_t ir_driver_read_hex(void) {
-    // Wait for the falling edge that starts the 9 ms burst on PA7
+    // Wait for the falling edge that starts the 9 ms burst
     uint32_t t0 = micros();
-    uint8_t pin_val = (PINA & (1 << PINA7)) ? HIGH : LOW;
-    
-    while (pin_val == HIGH) {
+    while (ir_read() == HIGH) {
         if (micros() - t0 > 10000) return 0;
-        pin_val = (PINA & (1 << PINA7)) ? HIGH : LOW;
     }
 
     uint32_t mark = ir_measure(LOW, 10000);
