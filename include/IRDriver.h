@@ -1,5 +1,4 @@
-#ifndef IR_DRIVER_H
-#define IR_DRIVER_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,6 +11,4 @@ uint32_t ir_driver_read_hex(void);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
